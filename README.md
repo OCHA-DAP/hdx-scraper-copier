@@ -6,7 +6,7 @@ Make sure you have the `copier` package installed.
 
 Navigate to the directory where you want to create the scraper folder, then execute:
 
-    copier copy path/to/hdx-scraper-cookiecutter .
+    copier copy path/to/hdx-scraper-copier .
 
 Fill in the values as prompted. Copier will use these values to generate the project
 files and directories.
