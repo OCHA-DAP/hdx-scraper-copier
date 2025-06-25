@@ -43,28 +43,9 @@ pip install pre-commit
 pre-commit install
 ```
 
-The configuration file for this project is in a non-standard location. Thus, you will
-need to edit your `.git/hooks/pre-commit` file to reflect this. Change the first line
-that begins with `ARGS` to:
-
-    ARGS=(hook-impl --hook-type=pre-commit)
-
 With pre-commit, all code is formatted according to
 [ruff](https://docs.astral.sh/ruff/) guidelines.
 
 To check if your changes pass pre-commit without committing, run:
 
     pre-commit run --all-files
-
-## Packages
-
-[uv](https://github.com/astral-sh/uv) is used for
-package management.  If you’ve introduced a new package to the
-source code please add it to `requirements.in`
-with any known version constraints.
-
-Any changes to the dependencies will be automatically reflected in
-`requirements.txt` with `pre-commit`,
-but you can re-generate the file without committing by executing:
-
-    pre-commit run pip-compile --all-files
