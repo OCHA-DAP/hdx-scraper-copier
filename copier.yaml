@@ -1,0 +1,32 @@
+scraper_name:
+  type: str
+  help: "Scraper name lowercase with underscores"
+dataset_source:
+  type: str
+  help: "Proper name of source organization"
+license_id:
+  type: str
+  default: "cc-by"
+methodology:
+  type: str
+  default: "Other"
+caveats:
+  type: str
+  default: ""
+private:
+  type: str
+  default: "False"
+dataset_maintainer:
+  type: str
+  help: "Dataset maintainer HDX ID"
+dataset_organization:
+  type: str
+  help: "Dataset organization HDX ID"
+dataset_expected_update_frequency:
+  type: str
+  help: "Update frequency"
+dataset_notes:
+  type: str
+  help: "Dataset notes"
+
+_subdirectory: template
