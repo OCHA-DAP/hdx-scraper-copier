@@ -11,6 +11,7 @@ from os.path import dirname, expanduser, join
 from hdx.api.configuration import Configuration
 from hdx.data.user import User
 from hdx.facades.infer_arguments import facade
+from hdx.scraper.{{scraper_name}}._version import __version__
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import (
     script_dir_plus_file,
@@ -20,7 +21,7 @@ from hdx.utilities.retriever import Retrieve
 
 logger = logging.getLogger(__name__)
 
-_USER_AGENT_LOOKUP = "hdx-scraper-{{scraper_name}}"
+_LOOKUP = "hdx-scraper-{{scraper_name}}"
 _SAVED_DATA_DIR = "saved_data"  # Keep in repo to avoid deletion in /tmp
 _UPDATED_BY_SCRIPT = "HDX Scraper: {{scraper_name|capitalize}}"
 
@@ -38,10 +39,11 @@ def main(
     Returns:
         None
     """
+    logger.info(f"##### {_LOOKUP} version {__version__} ####")
     configuration = Configuration.read()
     User.check_current_user_write_access("{{dataset_organization}}")
 
-    with wheretostart_tempdir_batch(folder=_USER_AGENT_LOOKUP) as info:
+    with wheretostart_tempdir_batch(folder=_LOOKUP) as info:
         temp_dir = info["folder"]
         with Download() as downloader:
             retriever = Retrieve(
@@ -72,9 +74,9 @@ def main(
 if __name__ == "__main__":
     facade(
         main,
-        hdx_site="dev",
+#        hdx_site="dev",
         user_agent_config_yaml=join(expanduser("~"), ".useragents.yaml"),
-        user_agent_lookup=_USER_AGENT_LOOKUP,
+        user_agent_lookup=_LOOKUP,
         project_config_yaml=script_dir_plus_file(
             join("config", "project_configuration.yaml"), main
         ),
