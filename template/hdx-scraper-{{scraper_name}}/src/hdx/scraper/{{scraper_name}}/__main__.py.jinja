@@ -39,7 +39,7 @@ def main(
         None
     """
     configuration = Configuration.read()
-    User.check_current_user_write_access("{{ dataset_organization }}")
+    User.check_current_user_write_access("{{dataset_organization}}")
 
     with wheretostart_tempdir_batch(folder=_USER_AGENT_LOOKUP) as info:
         temp_dir = info["folder"]
