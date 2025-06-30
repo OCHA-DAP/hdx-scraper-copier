@@ -12,6 +12,7 @@ from hdx.api.configuration import Configuration
 from hdx.data.user import User
 from hdx.facades.infer_arguments import facade
 from hdx.scraper.{{scraper_name}}._version import __version__
+from hdx.scraper.{{scraper_name}}.pipeline import Pipeline
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import (
     script_dir_plus_file,
@@ -54,21 +55,24 @@ def main(
                 save=save,
                 use_saved=use_saved,
             )
+            pipeline = Pipeline(configuration, retriever, temp_dir)
             #
             # Steps to generate dataset
             #
-            dataset.update_from_yaml(
-                script_dir_plus_file(
-                    join("config", "hdx_dataset_static.yaml"), main
+            dataset = pipeline.generate_dataset()
+            if dataset:
+                dataset.update_from_yaml(
+                    script_dir_plus_file(
+                        join("config", "hdx_dataset_static.yaml"), main
+                    )
                 )
-            )
-            dataset.create_in_hdx(
-                remove_additional_resources=True,
-                match_resource_order=False,
-                hxl_update=False,
-                updated_by_script=_UPDATED_BY_SCRIPT,
-                batch=info["batch"],
-            )
+                dataset.create_in_hdx(
+                    remove_additional_resources=True,
+                    match_resource_order=False,
+                    hxl_update=False,
+                    updated_by_script=_UPDATED_BY_SCRIPT,
+                    batch=info["batch"],
+                )
 
 
 if __name__ == "__main__":
