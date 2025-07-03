@@ -18,7 +18,7 @@ class Test{{scraper_name}}:
         config_dir
     ):
         with temp_dir(
-            "Test{{scraper_name}}",
+            "Test{{scraper_name|capitalize}}",
             delete_on_success=True,
             delete_on_failure=False,
         ) as tempdir:
