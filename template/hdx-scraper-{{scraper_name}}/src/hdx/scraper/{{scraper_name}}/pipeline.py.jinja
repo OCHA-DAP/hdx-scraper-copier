@@ -16,11 +16,11 @@ logger = logging.getLogger(__name__)
 class Pipeline:
 
     def __init__(
-        self, configuration: Configuration, retriever: Retrieve, temp_dir: str
+        self, configuration: Configuration, retriever: Retrieve, tempdir: str
     ):
         self._configuration = configuration
         self._retriever = retriever
-        self._temp_dir = temp_dir
+        self._tempdir = tempdir
 
 
     def generate_dataset(self) -> Optional[Dataset]:

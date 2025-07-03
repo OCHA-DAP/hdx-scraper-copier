@@ -45,17 +45,17 @@ def main(
     User.check_current_user_write_access("{{dataset_organization}}")
 
     with wheretostart_tempdir_batch(folder=_LOOKUP) as info:
-        temp_dir = info["folder"]
+        tempdir = info["folder"]
         with Download() as downloader:
             retriever = Retrieve(
                 downloader=downloader,
-                fallback_dir=temp_dir,
+                fallback_dir=tempdir,
                 saved_dir=_SAVED_DATA_DIR,
-                temp_dir=temp_dir,
+                temp_dir=tempdir,
                 save=save,
                 use_saved=use_saved,
             )
-            pipeline = Pipeline(configuration, retriever, temp_dir)
+            pipeline = Pipeline(configuration, retriever, tempdir)
             #
             # Steps to generate dataset
             #

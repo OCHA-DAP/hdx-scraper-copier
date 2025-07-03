@@ -31,7 +31,7 @@ class Test{{scraper_name}}:
                     save=False,
                     use_saved=True,
                 )
-                pipeline = Pipeline(configuration, retriever, temp_dir)
+                pipeline = Pipeline(configuration, retriever, tempdir)
                 dataset = pipeline.generate_dataset()
                 dataset.update_from_yaml(
                     path=join(config_dir, "hdx_dataset_static.yaml")
