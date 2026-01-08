@@ -34,7 +34,7 @@ jobs:
         python -m hdx.scraper.{{scraper_name}}{% raw %}
     - name: Send mail
       if: failure()
-      uses: dawidd6/action-send-mail@v6
+      uses: dawidd6/action-send-mail@v7
       with:
         server_address: ${{secrets.HDX_PIPELINE_EMAIL_SERVER}}
         server_port: ${{secrets.HDX_PIPELINE_EMAIL_PORT}}
