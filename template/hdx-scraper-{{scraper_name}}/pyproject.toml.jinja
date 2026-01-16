@@ -16,8 +16,10 @@ dependencies = [
   "hdx-python-api",
   "hdx-python-country",
   "hdx-python-utilities",
+  {%- if need_geo %}
   "geopandas",
   "pyarrow",
+  {%- endif %}
 ]
 
 [project.optional-dependencies]

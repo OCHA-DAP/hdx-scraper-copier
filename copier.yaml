@@ -31,6 +31,6 @@ dataset_notes:
 need_geo:
   type: bool
   help: "Do you need Geospatial Docker setup?"
-  default: true
+  default: false
 
 _subdirectory: template

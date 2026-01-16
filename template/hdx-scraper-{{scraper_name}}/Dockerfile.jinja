@@ -9,8 +9,7 @@ WORKDIR /app
 # 1. Install System Dependencies
 RUN --mount=type=cache,target=/var/cache/apk \
     apk add --upgrade \
-    git \
-    {%- if need_geo %}
+    git {% if need_geo %}\
     build-base \
     gdal-dev \
     geos-dev \
