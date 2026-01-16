@@ -6,18 +6,26 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 WORKDIR /app
 
-# 1. Install Basic Build Deps
-#    We only need 'git' for setuptools-scm versioning.
-#    'build-base' (compilers) is only needed if a pip package lacks Alpine wheels.
+# 1. Install System Dependencies
 RUN --mount=type=cache,target=/var/cache/apk \
-    apk add --upgrade git
+    apk add --upgrade \
+    git \
+    {%- if need_geo %}
+    build-base \
+    gdal-dev \
+    geos-dev \
+    proj-dev \
+    linux-headers
+    {%- endif %}
 
 # 2. Install Dependencies
 COPY pyproject.toml uv.lock ./
+#    --compile: Optimizes startup time
 RUN uv sync --frozen --no-dev --no-install-project --compile
 
-# 3. Install Project
+# 3. Install Your Project (Non-Editable)
 COPY . .
+#    Installs your code into site-packages so we don't need 'COPY . .' later
 RUN uv pip install --no-deps .
 
 # ----------------------------------------------------------------------------
@@ -30,12 +38,21 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# 1. Copy the Virtual Environment
+{%- if need_geo %}
+# 1. Install Runtime Libraries (Only if Geo is requested)
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add --upgrade \
+    gdal \
+    geos \
+    proj
+{%- endif %}
+
+# 2. Copy the Virtual Environment
 ENV VIRTUAL_ENV=/app/.venv
 COPY --from=builder /app/.venv ${VIRTUAL_ENV}
 ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 
-# 2. Copy the runner script
+# 3. Copy the runner script
 COPY run.py .
 
 CMD ["python3", "run.py"]
