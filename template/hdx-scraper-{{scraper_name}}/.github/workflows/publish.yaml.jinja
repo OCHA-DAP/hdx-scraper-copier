@@ -9,7 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
       - name: Checkout code
         id: checkout
         uses: actions/checkout@v6
@@ -20,12 +19,16 @@ jobs:
       - name: Tag Info
         id: tag_info
         run: |
-          export IMAGE_TAG="${GITHUB_REF#refs/*/}"
-          export IMAGE_TAG=${IMAGE_TAG//[^[:alnum:].-]/-}
-          echo ::set-output name=IMAGE_TAG::${IMAGE_TAG}
+          # 1. Strip the refs/tags/ prefix
+          IMAGE_TAG="${GITHUB_REF#refs/*/}"
+          # 2. Sanitize tag (replace special chars with dashes)
+          IMAGE_TAG=${IMAGE_TAG//[^[:alnum:].-]/-}
+          # 3. New syntax for setting outputs
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
@@ -46,5 +49,10 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: true{% endraw %}
-          tags: public.ecr.aws/unocha/hdx-scraper-{{scraper_name}}{{ ':${{ steps.tag_info.outputs.IMAGE_TAG }}' }}
+          push: true
+{%- endraw %}
+          tags: public.ecr.aws/unocha/hdx-scraper-{{scraper_name}}{% raw %}:${{ steps.tag_info.outputs.IMAGE_TAG }}
+          # Enable cache to speed up re-builds
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+{%- endraw %}
