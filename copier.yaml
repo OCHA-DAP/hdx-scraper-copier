@@ -28,5 +28,9 @@ dataset_expected_update_frequency:
 dataset_notes:
   type: str
   help: "Dataset notes"
+need_geo:
+  type: bool
+  help: "Do you need Geospatial Docker setup?"
+  default: false
 
 _subdirectory: template
