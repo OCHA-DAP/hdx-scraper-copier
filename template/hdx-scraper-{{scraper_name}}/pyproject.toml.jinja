@@ -22,12 +22,10 @@ dependencies = [
   {%- endif %}
 ]
 
-[project.optional-dependencies]
-test = [
+[dependency-groups]
+dev = [
   "pytest",
   "pytest-cov",
-]
-dev = [
   "pre-commit",
   "ruff==0.14.13",
 ]
