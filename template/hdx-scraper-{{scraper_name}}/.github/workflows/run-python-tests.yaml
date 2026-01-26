@@ -18,7 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      # uv can install Python for you, replacing setup-python
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
