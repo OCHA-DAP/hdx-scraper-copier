@@ -43,10 +43,10 @@ To run, execute:
 
 ### Pre-commit
 
-Be sure to install `pre-commit`, which is run every time you make a git commit:
+pre-commit will be installed when syncing uv. It is run every time you make a git
+commit if you call it like this:
 
 ```shell
-    pip install pre-commit
     pre-commit install
 ```
 
