@@ -2,7 +2,6 @@
 """{{scraper_name|capitalize}} scraper"""
 
 import logging
-from typing import List, Optional
 
 
 from hdx.api.configuration import Configuration
@@ -23,7 +22,7 @@ class Pipeline:
         self._tempdir = tempdir
 
 
-    def generate_dataset(self) -> Optional[Dataset]:
+    def generate_dataset(self) -> Dataset | None:
 
         # To be generated
         dataset_name = None
