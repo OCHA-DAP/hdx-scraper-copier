@@ -48,7 +48,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /srv
 
 {%- if need_geo %}
-# Install Runtime Libraries (Only if Geo is requested)
+# Install Runtime Libraries (if Geo requested)
 RUN --mount=type=cache,target=/var/cache/apk \
     apk add --upgrade \
     gdal \
