@@ -3,7 +3,8 @@ FROM public.ecr.aws/unocha/python:3.13-stable AS builder
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-WORKDIR /srv/hdx-scraper-{{scraper_name}}
+# Use the base /srv directory to inherit proper non-root permissions
+WORKDIR /srv
 
 # Ensures uv copies files instead of hardlinking to a cache that won't exist in Stage 2
 ENV UV_COMPILE_BYTECODE=1
@@ -43,7 +44,8 @@ FROM public.ecr.aws/unocha/python:3.13-stable
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /srv/hdx-scraper-{{scraper_name}}
+# Align with Stage 1
+WORKDIR /srv
 
 {%- if need_geo %}
 # Install Runtime Libraries (Only if Geo is requested)
@@ -55,9 +57,9 @@ RUN --mount=type=cache,target=/var/cache/apk \
 {%- endif %}
 
 # 1. Copy the entire working directory (includes .venv and root scripts like run.py)
-COPY --from=builder /srv/hdx-scraper-{{scraper_name}} /srv/hdx-scraper-{{scraper_name}}
+COPY --from=builder /srv /srv
 
 # 2. Prepend the Virtual Environment to the PATH
-ENV PATH="/srv/hdx-scraper-{{scraper_name}}/.venv/bin:${PATH}"
+ENV PATH="/srv/.venv/bin:${PATH}"
 
 CMD ["python3", "run.py"]
