@@ -1,10 +1,13 @@
-# ----------------------------------------------------------------------------
-# Stage 1: Builder
-# ----------------------------------------------------------------------------
+# --- Stage 1: Build & Install ---
 FROM public.ecr.aws/unocha/python:3.13-stable AS builder
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
-WORKDIR /app
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+WORKDIR /srv/hdx-scraper-{{scraper_name}}
+
+# Ensures uv copies files instead of hardlinking to a cache that won't exist in Stage 2
+ENV UV_COMPILE_BYTECODE=1
+ENV UV_LINK_MODE=copy
 
 # 1. Install System Dependencies
 RUN --mount=type=cache,target=/var/cache/apk \
@@ -14,31 +17,36 @@ RUN --mount=type=cache,target=/var/cache/apk \
     gdal-dev \
     geos-dev \
     proj-dev \
-    linux-headers
+    linux-headers\
     {%- endif %}
 
-# 2. Install Dependencies
+# 2. Copy only dependency locks first for layer caching
 COPY pyproject.toml uv.lock ./
-#    --compile: Optimizes startup time
-RUN uv sync --frozen --no-dev --no-install-project --compile
 
-# 3. Install Your Project (Non-Editable)
+# 3. Install Dependencies (without project code)
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev --no-install-project
+
+# 4. Copy the rest of the codebase
 COPY . .
-#    Installs your code into site-packages so we don't need 'COPY . .' later
-RUN uv pip install --no-deps .
 
-# ----------------------------------------------------------------------------
-# Stage 2: Final Runtime
-# ----------------------------------------------------------------------------
+# 5. Build and install the project non-editably into the .venv
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev --no-editable
+
+# 6. Delete the raw source tree to prevent shadowing the installed package
+RUN rm -rf src/ .git/ tests/
+
+# --- Stage 2: Final Runtime ---
 FROM public.ecr.aws/unocha/python:3.13-stable
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /app
+WORKDIR /srv/hdx-scraper-{{scraper_name}}
 
 {%- if need_geo %}
-# 1. Install Runtime Libraries (Only if Geo is requested)
+# Install Runtime Libraries (Only if Geo is requested)
 RUN --mount=type=cache,target=/var/cache/apk \
     apk add --upgrade \
     gdal \
@@ -46,12 +54,10 @@ RUN --mount=type=cache,target=/var/cache/apk \
     proj
 {%- endif %}
 
-# 2. Copy the Virtual Environment
-ENV VIRTUAL_ENV=/app/.venv
-COPY --from=builder /app/.venv ${VIRTUAL_ENV}
-ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
+# 1. Copy the entire working directory (includes .venv and root scripts like run.py)
+COPY --from=builder /srv/hdx-scraper-{{scraper_name}} /srv/hdx-scraper-{{scraper_name}}
 
-# 3. Copy the runner script
-COPY run.py .
+# 2. Prepend the Virtual Environment to the PATH
+ENV PATH="/srv/hdx-scraper-{{scraper_name}}/.venv/bin:${PATH}"
 
 CMD ["python3", "run.py"]
