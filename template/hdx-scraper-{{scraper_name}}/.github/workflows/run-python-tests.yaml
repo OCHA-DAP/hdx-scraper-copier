@@ -37,13 +37,11 @@ jobs:
 
       - name: Publish Unit Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
         with:
           files: test-results.xml
 
       - name: Publish in Coveralls
         uses: coverallsapp/github-action@v2
-        if: always()
         with:
           flag-name: tests
           format: lcov
