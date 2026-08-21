@@ -177,3 +177,6 @@ saved_data/
 
 # Mac files
 .DS_Store
+
+# Claude files
+.claude/
