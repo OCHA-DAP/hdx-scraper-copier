@@ -3,9 +3,7 @@
 Decision records: one immutable file per non-trivial design/architecture
 decision — using Michael Nygard's minimal headers (Title, Status, Context,
 Decision, Consequences), plus a `Date:` line under Status. Distill the
-decision itself; the full planning narrative behind it is not copied here
-(Claude Code already keeps its own local copy of plan-mode sessions 
-elsewhere).
+decision itself, not the full planning narrative behind it.
 
 A reversed decision gets a new record whose Status reads
 `Superseded by 00NN`; the old file stays as-is. Routine notes belong in
