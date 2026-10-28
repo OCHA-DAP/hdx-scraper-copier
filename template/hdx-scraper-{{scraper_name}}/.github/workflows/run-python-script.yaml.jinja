@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
@@ -37,7 +37,7 @@ jobs:
 {% raw %}
       - name: Send mail
         if: failure()
-        uses: dawidd6/action-send-mail@v7
+        uses: dawidd6/action-send-mail@47af4a10b540781705f283a2cf1a9650713ac795 # v23
         with:
           server_address: ${{secrets.HDX_PIPELINE_EMAIL_SERVER}}
           server_port: ${{secrets.HDX_PIPELINE_EMAIL_PORT}}
@@ -47,7 +47,6 @@ jobs:
           body: GitHub Actions run job for ${{github.repository}} failed!
           to: ${{vars.HDX_PIPELINE_EMAIL_LIST}}
           from: ${{secrets.HDX_PIPELINE_EMAIL_FROM}}
-          content_type: text/html
 
   workflow-keepalive:
     if: github.event_name == 'schedule'
@@ -55,5 +54,5 @@ jobs:
     permissions:
       actions: write
     steps:
-      - uses: liskin/gh-workflow-keepalive@v1
+      - uses: liskin/gh-workflow-keepalive@f72ff1a1336129f29bf0166c0fd0ca6cf1bcb38c # v1.2.1
 {%- endraw %}
